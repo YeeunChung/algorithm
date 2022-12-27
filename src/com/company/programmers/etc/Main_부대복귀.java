@@ -24,8 +24,7 @@ public class Main_부대복귀 {
          *
          * 1차 시도: roads 돌면서 정보 저장하고 bfs로 탐색 => 시간초과 남
          * 2차 시도: dp 써서 저장해뒀다가 돌면서 계산하기 (floyd 알고리즘) => 시간 초과, 메모리 초과
-         * 3차 시도: roads 돌면서 정보 저장하고 floyd처럼 탐색하기
-         *  - 근데 진짜 뒤에부터 탐색해야하나? ㅠㅠ
+         * 3차 시도: 다익스트라 알고리즘 써보깅...
          */
         Map<Integer, List<Integer>> roadMap = new HashMap<>();
         List<Integer> valueList;
