@@ -1,4 +1,4 @@
-package com.company.programmers.etc;
+package com.company.programmers.graph;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +27,94 @@ public class Main_부대복귀 {
          * 3차 시도: 다익스트라 알고리즘 써보려다가 갑자기 bfs 탐색 다시 도전 => 시간 초과 (4개)
          * 4차 시도: 다익스트라 알고리즘 진짜진짜 써보기
          */
+
+        Map<Integer, List<Integer>> roadMap = new HashMap<>();
+        List<Integer> valueList;
+        int[] length = new int[n+1]; // index i부터 destination까지의 거리
+        int[] answer = new int[sources.length];
+        Arrays.fill(length, n+1); // 최댓값으로 우선 채우기
+        length[destination] = 0;
+
+        for (int i=0; i< roads.length; ++i) {
+            valueList = roadMap.getOrDefault(roads[i][0], new ArrayList<>());
+            valueList.add(roads[i][1]);
+            roadMap.put(roads[i][0], valueList);
+
+            valueList = roadMap.getOrDefault(roads[i][1], new ArrayList<>());
+            valueList.add(roads[i][0]);
+            roadMap.put(roads[i][1], valueList);
+        }
+
+        valueList = roadMap.getOrDefault(destination, new ArrayList<>());
+        Queue<SourceLevel> queue = new LinkedList<>(valueList.stream()
+                .map(value -> new SourceLevel(value, 1))
+                .collect(Collectors.toList()));
+
+        Set<Integer> set = new HashSet<>(); // 검사한 길 표시
+        set.add(destination);
+
+        while (! queue.isEmpty()) {
+            SourceLevel sourceLevel = queue.poll();
+            int source = sourceLevel.getSource();
+            int level = sourceLevel.getLevel();
+
+            if (level < length[source])
+                length[source] = level;
+
+            set.add(source);
+
+            valueList = roadMap.getOrDefault(source, new ArrayList<>());
+            queue.addAll(valueList.stream()
+                    .filter(value -> ! set.contains(value))
+                    .map(value -> new SourceLevel(value, level + 1))
+                    .collect(Collectors.toList()));
+        }
+
+//        System.out.println(Arrays.toString(length));
+
+        for (int i=0; i< sources.length; ++i)
+            answer[i] = length[sources[i]] == n+1? -1: length[sources[i]];
+
+        return answer;
+
+    }
+
+    public static class SourceLevel {
+        private int source;
+        private int level;
+
+        public SourceLevel(int source, int level) {
+            this.source = source;
+            this.level = level;
+        }
+
+        public int getSource() {
+            return source;
+        }
+
+        public void setSource(int source) {
+            this.source = source;
+        }
+
+        public int getLevel() {
+            return level;
+        }
+
+        public void setLevel(int level) {
+            this.level = level;
+        }
+
+        @Override
+        public String toString() {
+            return "SourceLevel{" +
+                    "source=" + source +
+                    ", level=" + level +
+                    '}';
+        }
+    }
+
+
+    public static int[] solution_bfs(int n, int[][] roads, int[] sources, int destination) {
 
         Map<Integer, List<Integer>> roadMap = new HashMap<>(); // source, dest list
         List<Integer> valueList;
@@ -84,76 +172,7 @@ public class Main_부대복귀 {
         }
 
         return answer;
-    }
 
-    public static class SourceLevel {
-        private int source;
-        private int level;
-
-        public SourceLevel(int source, int level) {
-            this.source = source;
-            this.level = level;
-        }
-
-        public int getSource() {
-            return source;
-        }
-
-        public void setSource(int source) {
-            this.source = source;
-        }
-
-        public int getLevel() {
-            return level;
-        }
-
-        public void setLevel(int level) {
-            this.level = level;
-        }
-
-        @Override
-        public String toString() {
-            return "SourceLevel{" +
-                    "source=" + source +
-                    ", level=" + level +
-                    '}';
-        }
-    }
-
-
-    public static int[] solution_bfs(int n, int[][] roads, int[] sources, int destination) {
-
-        /**
-         * https://school.programmers.co.kr/learn/courses/30/lessons/132266
-         *
-         * 1차 시도: roads 돌면서 정보 저장하고 bfs로 탐색 => 시간초과 남
-         * 2차 시도: dp 써서 저장해뒀다가 돌면서 계산하기 (floyd 알고리즘) => 시간 초과, 메모리 초과
-         * 3차 시도: 다익스트라 알고리즘 써보려다가 갑자기 bfs 탐색 다시 도전 => 시간 초과 (4개)
-         * 4차 시도: 다익스트라 알고리즘 진짜진짜 써보기
-         */
-
-        int[] answer = new int[sources.length];
-        int[][] dynamic = new int[n+1][n+1]; // 길 정보 저장
-        for (int i=0; i< dynamic.length; ++i)
-            Arrays.fill(dynamic[i], n + 1); // 무한대로 저장
-        for (int i=1; i<=n; ++i)
-            dynamic[i][i] = 0;
-
-        // 정보 저장
-        for (int i=0; i< roads.length; ++i) {
-            dynamic[roads[i][0]][roads[i][1]] = 1;
-            dynamic[roads[i][1]][roads[i][0]] = 1;
-        }
-
-        for (int i=0; i<sources.length; ++i) {
-            if (dynamic[sources[i]][destination] != n + 1) { // 자기 자신이거나 목적지 한 큐에 갈 수 있으면 바로 저장
-                answer[i] = dynamic[sources[i]][destination]; continue;
-            }
-
-            for (int j=1; j<=n; ++j) {
-                if (j != i && dynamic[j])
-            }
-        }
     }
 
 
