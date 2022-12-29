@@ -36,13 +36,15 @@ public class Main_부대복귀 {
         length[destination] = 0;
 
         for (int i=0; i< roads.length; ++i) {
-            valueList = roadMap.getOrDefault(roads[i][0], new ArrayList<>());
-            valueList.add(roads[i][1]);
-            roadMap.put(roads[i][0], valueList);
+//            valueList = roadMap.getOrDefault(roads[i][0], new ArrayList<>());
+//            valueList.add(roads[i][1]);
+//            roadMap.put(roads[i][0], valueList);
+            roadMap.computeIfAbsent(roads[i][0], k -> new ArrayList<>()).add(roads[i][1]);
 
-            valueList = roadMap.getOrDefault(roads[i][1], new ArrayList<>());
-            valueList.add(roads[i][0]);
-            roadMap.put(roads[i][1], valueList);
+//            valueList = roadMap.getOrDefault(roads[i][1], new ArrayList<>());
+//            valueList.add(roads[i][0]);
+//            roadMap.put(roads[i][1], valueList);
+            roadMap.computeIfAbsent(roads[i][1], k -> new ArrayList<>()).add(roads[i][0]);
         }
 
         valueList = roadMap.getOrDefault(destination, new ArrayList<>());
