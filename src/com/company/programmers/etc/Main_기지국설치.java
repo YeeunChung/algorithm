@@ -1,7 +1,7 @@
 package com.company.programmers.etc;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.*;
 
 public class Main_기지국설치 {
 
@@ -15,53 +15,41 @@ public class Main_기지국설치 {
     public static int solution(int n, int[] stations, int w) {
 
         /**
-         * stations 돌면서
+         * https://school.programmers.co.kr/learn/courses/30/lessons/12979
          *
-         *             <--------->
-         * 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
-         */
-        int[] coverage = new int[n];
-        int answer = 0;
+         * 1. 단순하게 coverage 모두 표시 -> 답은 통과하는데 시간 초과 남
+         * 2. 커버 안 된 구간 구해서 계산하기 -> 답은 통과하는데 시간 초과 (더 느려짐...)
+         **/
+        int answer = 0, start = 0;
+        Map<Integer, Integer> uncoveredMap = new HashMap<>();
 
-        for (int i=0; i<stations.length; ++i) {
-            int station = stations[i] - 1;
+        for (int i=0; i< stations.length; ++i) {
+            int s = stations[i] - 1 - w < 0? 0: stations[i] - 1 - w;
+            int e = stations[i] - 1 + w >= n? n - 1: stations[i] - 1 + w;
+            System.out.println(s + " " + e);
 
-            coverage[station] = 1;
-            for (int j=station+1; j<=station+w; ++j) {
-                if (j < n) coverage[j] = 1;
-                else break;
-            }
-            for (int j=station-1; j>=station-w; --j) {
-                if (j >= 0) coverage[j] = 1;
-                else break;
-            }
+            if (start <= s-1) uncoveredMap.put(start, s-1);
+            start = e+1;
         }
 
-        System.out.println(Arrays.toString(coverage));
+        if (start != n) uncoveredMap.put(start, n-1);
+        System.out.println(uncoveredMap);
 
-        int start = 0;
-        int end = 0;
-        int count;
-        int cov = 2 * w + 1;
-
-        for (int i=0; i<n; ++i) {
-            if (coverage[i] == 0) ++end;
-            else {
-                count = end - start;
-                answer += (count / cov);
-                if (count % cov != 0) ++answer;
-                start = i+1;
-                end = i+1;
-            }
-
-            if (i == n-1) {
-                count = end - start;
-                answer += (count / cov);
-                if (count % cov != 0) ++answer;
-            }
+        Set<Integer> keySet = uncoveredMap.keySet();
+        for (Integer key: keySet) {
+            int length = uncoveredMap.get(key) - key + 1; // 커버 안 된 길이
+            answer += length % (2*w + 1) == 0? length / (2*w + 1): length / (2*w + 1) + 1;
         }
 
         return answer;
+    }
+
+    static void cover(boolean[] coverage, int mid, int w) {
+        for (int i=mid; i>=0 && i>=mid-w; --i)
+            coverage[i] = true;
+
+        for (int i=mid; i< coverage.length && i<=mid+w; ++i)
+            coverage[i] = true;
     }
 
 }
