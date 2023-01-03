@@ -1,7 +1,4 @@
-package com.company.programmers.etc;
-
-import java.lang.reflect.Array;
-import java.util.*;
+package com.company.programmers.math;
 
 public class Main_기지국설치 {
 
