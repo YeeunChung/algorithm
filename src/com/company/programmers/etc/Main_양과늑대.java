@@ -24,14 +24,7 @@ public class Main_양과늑대 {
         /**
          * https://school.programmers.co.kr/learn/courses/30/lessons/92343
          *
-         * 1. 양이면 일단 고 하고 info를 바꿔준다 (비워준다. 2로)
-         * 2. 늑대고 더해도 양 수 안 넘으면 일단 진행...
-         *    더했는데 양 수랑 같아지면 뒤로 빽도 수행... 양 수 - 1 == 늑대수 일 때까지 (while문으로)
-         *      그러다가 root까지 와버리면...?
-         *          다른 쪽 한 번 더 돌아보고 또 다시 돌아오면 끝
-         *      뺵도하다가 양수 - 1 == 늑대수인 지점 오면 안 방문한 쪽으로 다시 가보기
-         *    진행하다가 맨 끝 도달하면 빽도하기
-         *
+         * 지나갈 수 있는 상태인지 확인하고, 지나갈 수 있으면 자기 자손을 방문할 리스트에 넣어준다.
          */
 
         for (int[] edgeInfo: edges)
@@ -51,6 +44,7 @@ public class Main_양과늑대 {
 
     static void dfs(int parent, int[] info, int[] sheepCnt, List<Integer> nextList) {
 
+        System.out.println(parent);
         if (info[parent] == 0) {
             sheepCnt[0]++;
         } else {
@@ -60,10 +54,19 @@ public class Main_양과늑대 {
                 sheepCnt[1]++;
         }
 
-        nextList.remove(parent);
-        nextList.addAll(edgeMap.getOrDefault(parent, new ArrayList<>()));
-        nextList.forEach(next -> );
+        System.out.println("sheepCnt: " + Arrays.toString(sheepCnt));
 
+        List<Integer> newNextList = new ArrayList<>();
+
+        for (Integer next: nextList) // 깊은 복사
+            newNextList.add(next);
+
+        newNextList.remove(nextList.indexOf(parent));
+        newNextList.addAll(edgeMap.getOrDefault(parent, new ArrayList<>()));
+        System.out.println("nextList: " + newNextList);
+        newNextList.forEach(next -> dfs(next, info, sheepCnt, newNextList));
+
+        answer = Math.max(answer, sheepCnt[0]);
 
     }
 
