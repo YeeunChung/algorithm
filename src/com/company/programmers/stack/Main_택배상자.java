@@ -1,4 +1,4 @@
-package com.company.programmers.etc;
+package com.company.programmers.stack;
 
 import java.util.*;
 
@@ -11,8 +11,10 @@ public class Main_택배상자 {
 
     public static int solution(int[] order) {
         /**
-         1 3 2 5 4
-         3 5 4 1 2
+         *
+         * https://school.programmers.co.kr/learn/courses/30/lessons/131704
+         * 1 3 2 5 4
+         * 3 5 4 1 2
          */
 
         Stack<Integer> stack = new Stack<>();
