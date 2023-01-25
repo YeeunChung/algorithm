@@ -15,20 +15,12 @@ public class Main_미로탈출명령어 {
     static int[] dx = {1, 0, 0, -1};
     static int[] dy = {0, -1, 1, 0};
     static char[] alp = {'d', 'l', 'r', 'u'};
-    static Character[][] map;
     static String shortest;
 
     public static String solution(int n, int m, int x, int y, int r, int c, int k) {
 
         /**
          * https://school.programmers.co.kr/learn/courses/30/lessons/150365
-         *
-         * (x, y) -> (r, c)
-         *
-         * . . . .
-         * . . S .
-         * E . . .
-         *
          * 왼쪽 오른쪽: rl
          * 위쪽 아래쪽: ud
          *
@@ -37,56 +29,68 @@ public class Main_미로탈출명령어 {
          * lr
          *
          * 답: dll, dllrl
-         *
-         * du
-         * lr
-         * 1 <= k <= 2500
-         *
-         * l
-         *
          */
 
-        map = new Character[n][m];
-
-        for (Character[] row: map)
-            Arrays.fill(row, '.');
-        map[x-1][y-1] = 'S';
-        map[r-1][c-1] = 'E';
-
-        boolean[][] visited = new boolean[n][m];
-
-        dfs(x-1, y-1, visited, "");
-        System.out.println(shortest);
+        
 
         // 홀수만큼 남으면 impossible
-        if (shortest.length() < k || (k - shortest.length()) % 2 != 0) return "impossible";
+        if (shortest.length() > k || (k - shortest.length()) % 2 != 0) return "impossible1";
 
         // 짝수면 계산
         int remain = (k - shortest.length()) / 2; // remain * 2만큼 더 추가해줘야 한다.
-
-        return "even";
-    }
-
-    // k 상관 없이 최단 이동 찾기
-    static void dfs(int x, int y, boolean[][] visited, String name) {
-
-        if (map[x][y] == 'E') {
-            if (shortest == null) shortest = name;
-            else shortest = name.length() < shortest.length()? name: shortest;
-            return;
-        }
-
-        for (int i=0; i<4; ++i) {
-            int newX = x + dx[i];
-            int newY = y + dy[i];
-
-            if (newX >= 0 && newX < map.length && newY >= 0 && newY < map[0].length && ! visited[newX][newY]) {
-                visited[newX][newY] = true;
-                String newName = name.concat(String.valueOf(alp[i]));
-                dfs(newX, newY, visited, newName);
-                visited[newX][newY] = false;
+        int[] count = new int[4]; // dlru count
+        for (int i=0; i<shortest.length(); ++i) {
+            switch (shortest.charAt(i)) {
+                case 'd': count[0]++; break;
+                case 'l': count[1]++; break;
+                case 'r': count[2]++; break;
+                case 'u': count[3]++; break;
             }
         }
+
+        int currentX = x-1;
+        int currentY = y-1;
+        String answer = "";
+
+        for (int i=0; i<k; ++i) {
+            int newX = -1, newY = -1;
+
+            for (int j=0; j<4; ++j) {
+                newX = currentX + dx[j];
+                newY = currentY + dy[j];
+
+                // 이동할 수 있으면 이동
+                if (newX >= 0 && newX < map.length && newY >= 0 && newY < map[0].length) {
+                    if (count[j] > 0) {
+                        count[j]--;
+                        answer.concat(String.valueOf(alp[j]));
+                        break;
+                    } else {
+                        if (remain == 0) continue;
+
+                        switch (j) {
+                            case 0: count[3]++; break;
+                            case 1: count[2]++; break;
+                            case 2: count[1]++; break;
+                            case 3: count[0]++; break;
+                        }
+
+                        remain--;
+                        answer.concat(String.valueOf(alp[j]));
+                        break;
+                    }
+                }
+            }
+
+            if (newX != -1) { // 다음 칸으로 넘어갔다
+                currentX = newX;
+                currentY = newY;
+            } else { // 어느 방향으로도 이동할 수 없었다
+                return "impossible2";
+            }
+        }
+
+        return answer;
     }
 
 }
