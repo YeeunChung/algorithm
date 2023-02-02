@@ -79,8 +79,7 @@ public class Main_후보키 {
         List<Character> aCharList = a.chars().mapToObj(c -> (char) c).collect(Collectors.toList());
         List<Character> bCharList = b.chars().mapToObj(c -> (char) c).collect(Collectors.toList());
 
-        if (aCharList.stream().allMatch(aChar -> bCharList.contains(aChar))) return true;
-        return false;
+        return aCharList.stream().allMatch(aChar -> bCharList.contains(aChar));
     }
 
     /**
